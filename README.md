@@ -8,7 +8,7 @@ source env/bin/activate
 ./env/Scripts/Activate.ps1
 
 
--- deactivate venv
+-- deactivate venv (even on windows)
 (env) $ deactivate
 
 -- other commands
@@ -27,3 +27,7 @@ pip install -r requirements.txt
 
 # unicode error in poweshell
 run chcp 65001
+
+# Tutorials
+https://blog.morizyun.com/python/library-boto3-aws-dynamodb.html
+

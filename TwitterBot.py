@@ -1,4 +1,6 @@
 import tweepy, os
+import TravelDealDB as tddb
+from TravelDealNotifier import send_notification
 
 # credentials
 consumer_key = os.environ['TWITTER_CONSUMER_KEY']
@@ -14,26 +16,59 @@ api = tweepy.API(auth)
 list_name = 'flight-deals'
 my_keywords = ['clt', 'rdu', 'atl', 'charlotte', 'raleigh', 'atlanta']
 user = api.me()
+print('Populating flight deals for', user.screen_name)
 
-def get_list_members():    
+def get_list_members():
     members = []
     for page in tweepy.Cursor(api.list_members, user.screen_name, list_name).items():
         members.append(page)
     return [m.screen_name for m in members]
 
-# 1109870060020137984
+def get_initial_tweets():
+    tweets = []
+    for page in tweepy.Cursor(api.list_timeline, user.screen_name, list_name, page=1).items():
+        tweets.append(page)
+    return get_relevant_tweets(tweets)
+
 def get_tweets(last_tweet_id):
     tweets = []
-    for page in tweepy.Cursor(api.list_timeline, user.screen_name, list_name, since_id=last_tweet_id, page=1).items():
+    for page in tweepy.Cursor(api.list_timeline, user.screen_name, list_name, since_id=last_tweet_id).items():
         tweets.append(page)
+    return get_relevant_tweets(tweets)
 
+def get_relevant_tweets(tweets):
     relevant_tweets = []
     for tweet in tweets:
         tweet_text = tweet.text.lower()
         if any(kw in tweet_text for kw in my_keywords):
             # figure out which keywords
             kws = [my_keywords[ind] for ind, kw in enumerate(my_keywords) if kw in tweet_text]
-            relevant_tweets.append({'text': tweet.text, 'id': tweet.id_str, 'created_at': tweet.created_at, 'screen_name': tweet.user.screen_name, 'kw_matches': '-'.join([k.upper() for k in kws])})
+            relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'search_terms': '-'.join([k.upper() for k in kws])})
     return relevant_tweets
 
-       
+def process_tweets():
+    twitter_username = user.screen_name
+    last_tweet_id = tddb.get_user_last_tweet_id(twitter_username)
+    if last_tweet_id is None:
+        tweets = get_initial_tweets()
+    else:
+        tweets = get_tweets(last_tweet_id)
+    if len(tweets) > 0:
+        print('Saving %d tweets'%len(tweets))
+        tddb.insert_tweets(tweets)
+        update_twitter_user(twitter_username, tweets[0]['tweet_id'], last_tweet_id is not None)
+        send_notification(twitter_username, len(tweets))
+    else:
+        print('No new tweets :(')
+
+def update_twitter_user(twitter_username, last_tweet_id, user_exists):
+    user = {
+        'twitter_username': twitter_username,
+        'last_tweet_id': last_tweet_id
+    }
+    if user_exists:
+        response = tddb.update_user(user)
+    else:
+        response = tddb.insert_user(user)
+
+process_tweets()
