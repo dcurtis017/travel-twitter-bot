@@ -10,13 +10,23 @@
 #    docs.serverless.com
 #
 # Happy Coding!
-
+# add stages later
 service: twitter-flight-bot # NOTE: update this with your service name
 
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+  userTableName: twitter-flight-user
+  tweetsTableName: twitter-flight-tweets
+  resourceTagKey: Project
+  resourceTagValue: "Twitter Flight Deals"
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
-
 provider:
   name: aws
   runtime: python3.7
@@ -26,7 +36,20 @@ provider:
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dyanmodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "Fn::GetAtt": [TwitterUserTable, Arn]
+        - "Fn::GetAtt": [TwitterTweetsTable, Arn]
+
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
@@ -42,8 +65,10 @@ provider:
 #            - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    userTableName: ${self:custom:userTableName}
+    tweetsTableName: ${self:custom:tweetsTableName}
+
 
 # you can add packaging information here
 #package:
@@ -98,7 +123,10 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
+resources:
+  - ${file(resources/new-deal-sns-topic.yml)}
+  - ${file(resources/flight-tweets-table.yml)}
+  - ${file(resources/flight-user-table.yml)}
 #  Resources:
 #    NewResource:
 #      Type: AWS::S3::Bucket
@@ -109,9 +137,3 @@ functions:
 #       Description: "Description for the output"
 #       Value: "Some output value"
 
-plugins:
-  - serverless-python-requirements
-
-custom:
-  pythonRequirements:
-    dockerizePip: non-linux

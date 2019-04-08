@@ -31,3 +31,9 @@ run chcp 65001
 # Tutorials
 https://blog.morizyun.com/python/library-boto3-aws-dynamodb.html
 
+#To Do
+- add tags to resources
+- play with indexes
+- put python stuff in a separate directory
+- make a directory for front end??
+

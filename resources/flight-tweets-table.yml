@@ -1,0 +1,21 @@
+Resources:
+  TwitterTweetsTable:
+    Type: AWS:DynamoDB::Table
+    Properties:
+      TableName: ${self.custom.tweetsTableName}
+      AttributeDefinitions:
+        - AttributeName: search_terms
+          AttributeType: S
+        - AttributeName: tweet_id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: search_terms
+          KeyType: HASH
+        - AttributeName: tweet_id
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      Tags:
+        - Key: ${self.custom.resourceTagKey}
+          Value: ${self.custom.resourceTagValue}

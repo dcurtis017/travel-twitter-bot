@@ -1,0 +1,17 @@
+Resources:
+  TwitterUserTable:
+    Type: AWS:DynamoDB::Table
+    Properties:
+      TableName: ${self.custom.usersTableName}
+      AttributeDefinitions:
+        - AttributeName: twitter_username
+          AttributeType: S
+      KeySchema:
+        - AttributeName: twitter_username
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      Tags:
+        - Key: ${self.custom.resourceTagKey}
+          Value: ${self.custom.resourceTagValue}
