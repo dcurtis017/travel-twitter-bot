@@ -1,8 +1,9 @@
 Resources:
   TwitterTweetsTable:
-    Type: AWS:DynamoDB::Table
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete # switch to Retain when done 
     Properties:
-      TableName: ${self.custom.tweetsTableName}
+      TableName: ${self:custom.tweetsTableName}
       AttributeDefinitions:
         - AttributeName: search_terms
           AttributeType: S
@@ -17,5 +18,5 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       Tags:
-        - Key: ${self.custom.resourceTagKey}
-          Value: ${self.custom.resourceTagValue}
+        - Key: ${self:custom.resourceTagKey}
+          Value: ${self:custom.resourceTagValue}

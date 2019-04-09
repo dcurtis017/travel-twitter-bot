@@ -22,7 +22,7 @@ custom:
     dockerizePip: non-linux
   userTableName: twitter-flight-user
   tweetsTableName: twitter-flight-tweets
-  resourceTagKey: Project
+  resourceTagKey: "Project"
   resourceTagValue: "Twitter Flight Deals"
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -66,8 +66,8 @@ provider:
 
 # you can define service wide environment variables here
   environment:
-    userTableName: ${self:custom:userTableName}
-    tweetsTableName: ${self:custom:tweetsTableName}
+    userTableName: ${self:custom.userTableName}
+    tweetsTableName: ${self:custom.tweetsTableName}
 
 
 # you can add packaging information here
@@ -81,13 +81,9 @@ provider:
 
 functions:
   scrape-flight-deals:
-    handler: handler.scrape_deals
+    handler: handler.process_tweets
     events:
       - schedule: rate(3 hours)
-  remove-past-flight-deals:
-    handler: handler.remove_deals
-    events:
-      - schedule: rate(7 days)
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

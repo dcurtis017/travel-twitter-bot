@@ -1,8 +1,9 @@
 Resources:
   TwitterUserTable:
-    Type: AWS:DynamoDB::Table
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete # switch to Retain when done 
     Properties:
-      TableName: ${self.custom.usersTableName}
+      TableName: ${self:custom.userTableName}
       AttributeDefinitions:
         - AttributeName: twitter_username
           AttributeType: S
@@ -13,5 +14,5 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       Tags:
-        - Key: ${self.custom.resourceTagKey}
-          Value: ${self.custom.resourceTagValue}
+        - Key: ${self:custom.resourceTagKey}
+          Value: ${self:custom.resourceTagValue}

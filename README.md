@@ -36,4 +36,8 @@ https://blog.morizyun.com/python/library-boto3-aws-dynamodb.html
 - play with indexes
 - put python stuff in a separate directory
 - make a directory for front end??
+- reduce memory for lambdas
+- use ssm
 
+# gotchas
+- make sure to save requirements.txt in utf-8

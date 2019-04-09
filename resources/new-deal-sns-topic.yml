@@ -1,6 +1,6 @@
 Resources:
   NewDealTopic:
-    Type: AWS::SNS::TOPIC
+    Type: AWS::SNS::Topic
     Properties:
       DisplayName: "New Flight Deals Available"
       TopicName: new-flight-deals-on-twitter
@@ -8,9 +8,6 @@ Resources:
         -
           Protocol: sms
           Endpoint: ${opt:sms-phone-number}
-      Tags:
-        - Key: ${self.custom.resourceTagKey}
-          Value: ${self.custom.resourceTagValue}
 
 Outputs:
   SNSTopicId:
