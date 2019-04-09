@@ -20,6 +20,7 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: non-linux
+    slim: true
   userTableName: twitter-flight-user
   tweetsTableName: twitter-flight-tweets
   resourceTagKey: "Project"

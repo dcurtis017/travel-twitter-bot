@@ -41,3 +41,4 @@ https://blog.morizyun.com/python/library-boto3-aws-dynamodb.html
 
 # gotchas
 - make sure to save requirements.txt in utf-8
+- to reduce size of zip uploaded try https://github.com/UnitedIncome/serverless-python-requirements
