@@ -38,6 +38,8 @@ https://blog.morizyun.com/python/library-boto3-aws-dynamodb.html
 - make a directory for front end??
 - reduce memory for lambdas
 - use ssm
+- purge functionality
+- get tweet functionality
 
 # gotchas
 - make sure to save requirements.txt in utf-8

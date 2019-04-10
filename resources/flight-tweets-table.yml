@@ -9,6 +9,8 @@ Resources:
           AttributeType: S
         - AttributeName: tweet_id
           AttributeType: N
+        - AttributeName: created_at
+          AttributeType: S
       KeySchema:
         - AttributeName: search_terms
           KeyType: HASH
@@ -17,6 +19,18 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+      GlobalSecondaryIndexes:
+        - IndexName: TweetCreatedDate
+          KeySchema:
+            - AttributeName: search_terms
+              KeyType: HASH
+            - AttributeName: created_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 2
+            WriteCapacityUnits: 2
       Tags:
         - Key: ${self:custom.resourceTagKey}
           Value: ${self:custom.resourceTagValue}
