@@ -32,12 +32,13 @@ run chcp 65001
 https://blog.morizyun.com/python/library-boto3-aws-dynamodb.html
 
 #To Do
-- add tags to resources
+- add tags to resources (done)
 - play with indexes
 - put python stuff in a separate directory
 - make a directory for front end??
 - reduce memory for lambdas
-- use ssm
+- use ssm (done)
+- make functoin parameters correct
 - purge functionality
 - get tweet functionality
 

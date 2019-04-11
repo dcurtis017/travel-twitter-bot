@@ -69,6 +69,10 @@ provider:
   environment:
     userTableName: ${self:custom.userTableName}
     tweetsTableName: ${self:custom.tweetsTableName}
+    TWITTER_ACCESS_TOKEN: ${ssm:dcTwitterAccessToken}
+    TWITTER_ACCESS_TOKEN_SECRET: ${ssm:dcTwitterAccessTokenSecret}
+    TWITTER_CONSUMER_KEY: ${ssm:dcTwitterConsumerKey}
+    TWITTER_CONSUMER_SECRET: ${ssm:dcTwitterConsumerSecret}
 
 
 # you can add packaging information here
