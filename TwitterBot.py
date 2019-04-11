@@ -46,7 +46,7 @@ def get_relevant_tweets(tweets):
             relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'search_terms': '-'.join([k.upper() for k in kws])})
     return relevant_tweets
 
-def process_tweets():
+def process_tweets(event, context):
     twitter_username = user.screen_name
     last_tweet_id = tddb.get_user_last_tweet_id(twitter_username)
     if last_tweet_id is None:
@@ -70,5 +70,3 @@ def update_twitter_user(twitter_username, last_tweet_id, user_exists):
         response = tddb.update_user(user)
     else:
         response = tddb.insert_user(user)
-
-process_tweets()

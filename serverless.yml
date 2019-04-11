@@ -31,6 +31,8 @@ custom:
 provider:
   name: aws
   runtime: python3.7
+  memorySize: 256
+  timeout: 15
 
 # you can overwrite defaults here
 #  stage: dev
@@ -47,9 +49,16 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
       Resource:
         - "Fn::GetAtt": [TwitterUserTable, Arn]
         - "Fn::GetAtt": [TwitterTweetsTable, Arn]
+    - Effect: Allow
+      Action: 
+        - SNS:Publish
+      Resource:
+        - Ref: NewDealTopic
+
 
 #    - Effect: "Allow"
 #      Action:
@@ -73,6 +82,8 @@ provider:
     TWITTER_ACCESS_TOKEN_SECRET: ${ssm:dcTwitterAccessTokenSecret}
     TWITTER_CONSUMER_KEY: ${ssm:dcTwitterConsumerKey}
     TWITTER_CONSUMER_SECRET: ${ssm:dcTwitterConsumerSecret}
+    TWITTER_NOTIFICATION_SNS_ARN: 
+      Ref: NewDealTopic
 
 
 # you can add packaging information here
@@ -86,7 +97,8 @@ provider:
 
 functions:
   scrape-flight-deals:
-    handler: handler.process_tweets
+    handler: TwitterBot.process_tweets
+    description: Scrape flight deals from twitter users list
     events:
       - schedule: rate(3 hours)
 
@@ -128,13 +140,3 @@ resources:
   - ${file(resources/new-deal-sns-topic.yml)}
   - ${file(resources/flight-tweets-table.yml)}
   - ${file(resources/flight-user-table.yml)}
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
-

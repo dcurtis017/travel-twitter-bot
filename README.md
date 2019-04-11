@@ -41,6 +41,7 @@ https://blog.morizyun.com/python/library-boto3-aws-dynamodb.html
 - make functoin parameters correct
 - purge functionality
 - get tweet functionality
+- cost control limits
 
 # gotchas
 - make sure to save requirements.txt in utf-8
