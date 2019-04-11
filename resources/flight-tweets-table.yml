@@ -1,7 +1,7 @@
 Resources:
   TwitterTweetsTable:
     Type: AWS::DynamoDB::Table
-    DeletionPolicy: Delete # switch to Retain when done 
+    DeletionPolicy: Delete # switch to Retain when done
     Properties:
       TableName: ${self:custom.tweetsTableName}
       AttributeDefinitions:
@@ -20,7 +20,7 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       GlobalSecondaryIndexes:
-        - IndexName: TweetCreatedDate
+        - IndexName: ${self:custom.tweetsTableName-CreatedDate-Index}
           KeySchema:
             - AttributeName: search_terms
               KeyType: HASH

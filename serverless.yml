@@ -23,6 +23,7 @@ custom:
     slim: true
   userTableName: twitter-flight-user
   tweetsTableName: twitter-flight-tweets
+  tweetsTableName-CreatedDate-Index: TweetCreatedDate
   resourceTagKey: "Project"
   resourceTagValue: "Twitter Flight Deals"
 # You can pin your service to only deploy with a specific Serverless version
@@ -54,7 +55,7 @@ provider:
         - "Fn::GetAtt": [TwitterUserTable, Arn]
         - "Fn::GetAtt": [TwitterTweetsTable, Arn]
     - Effect: Allow
-      Action: 
+      Action:
         - SNS:Publish
       Resource:
         - Ref: NewDealTopic
@@ -78,11 +79,12 @@ provider:
   environment:
     userTableName: ${self:custom.userTableName}
     tweetsTableName: ${self:custom.tweetsTableName}
+    tweetsTableCreatedDateIndex: ${tweetsTableName-CreatedDate-Index}
     TWITTER_ACCESS_TOKEN: ${ssm:dcTwitterAccessToken}
     TWITTER_ACCESS_TOKEN_SECRET: ${ssm:dcTwitterAccessTokenSecret}
     TWITTER_CONSUMER_KEY: ${ssm:dcTwitterConsumerKey}
     TWITTER_CONSUMER_SECRET: ${ssm:dcTwitterConsumerSecret}
-    TWITTER_NOTIFICATION_SNS_ARN: 
+    TWITTER_NOTIFICATION_SNS_ARN:
       Ref: NewDealTopic
 
 
