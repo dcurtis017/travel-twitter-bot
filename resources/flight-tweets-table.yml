@@ -11,6 +11,8 @@ Resources:
           AttributeType: N
         - AttributeName: created_at
           AttributeType: S
+        - AttributeName: screen_name
+          AttributeType: S
       KeySchema:
         - AttributeName: search_terms
           KeyType: HASH
@@ -20,9 +22,9 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       GlobalSecondaryIndexes:
-        - IndexName: TweetCreatedDate
+        - IndexName: ${self:custom.tweetsTableName-CreatedDate-Index}
           KeySchema:
-            - AttributeName: search_terms
+            - AttributeName: screen_name
               KeyType: HASH
             - AttributeName: created_at
               KeyType: RANGE

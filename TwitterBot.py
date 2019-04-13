@@ -70,3 +70,8 @@ def update_twitter_user(twitter_username, last_tweet_id, user_exists):
         response = tddb.update_user(user)
     else:
         response = tddb.insert_user(user)
+
+def process_tweet_cleanup(event, context):       
+    members = get_list_members()
+    print('Cleaning up tweets older than %s days'%(event['days']))
+    tddb.delete_tweets_older_than(members, event['days']) 

@@ -23,8 +23,10 @@ custom:
     slim: true
   userTableName: twitter-flight-user
   tweetsTableName: twitter-flight-tweets
+  tweetsTableName-CreatedDate-Index: TweetCreatedDate
   resourceTagKey: "Project"
   resourceTagValue: "Twitter Flight Deals"
+  cleanupDays: 7
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
@@ -54,6 +56,13 @@ provider:
         - "Fn::GetAtt": [TwitterUserTable, Arn]
         - "Fn::GetAtt": [TwitterTweetsTable, Arn]
     - Effect: Allow
+      Action:
+        - dynamodb:Query
+      Resource:
+        - { "Fn::Join": [ "/", [
+          { "Fn::GetAtt": ["TwitterTweetsTable", "Arn" ] }, "index", "${self:custom.tweetsTableName-CreatedDate-Index}"
+        ]]}
+    - Effect: Allow
       Action: 
         - SNS:Publish
       Resource:
@@ -78,6 +87,7 @@ provider:
   environment:
     userTableName: ${self:custom.userTableName}
     tweetsTableName: ${self:custom.tweetsTableName}
+    tweetsTableCreatedDateIndex: ${self:custom.tweetsTableName-CreatedDate-Index}
     TWITTER_ACCESS_TOKEN: ${ssm:dcTwitterAccessToken}
     TWITTER_ACCESS_TOKEN_SECRET: ${ssm:dcTwitterAccessTokenSecret}
     TWITTER_CONSUMER_KEY: ${ssm:dcTwitterConsumerKey}
@@ -101,6 +111,15 @@ functions:
     description: Scrape flight deals from twitter users list
     events:
       - schedule: rate(3 hours)
+  cleanup-old-flight-deals:
+    handler: TwitterBot.process_tweet_cleanup
+    description: Remove old flight deals
+    events:
+      - schedule: 
+          rate: rate(${self:custom.cleanupDays} days)
+          input:
+            days: ${self:custom.cleanupDays}
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
