@@ -1,4 +1,4 @@
-import tweepy, os
+import tweepy, os, json
 import TravelDealDB as tddb
 from TravelDealNotifier import send_notification
 
@@ -15,6 +15,7 @@ api = tweepy.API(auth)
 
 list_name = 'flight-deals'
 my_keywords = ['clt', 'rdu', 'atl', 'charlotte', 'raleigh', 'atlanta']
+airport_dict = {'atl': 'Atlanta', 'clt': 'Charlotte', 'rdu': 'Raleigh'}
 user = api.me()
 print('Populating flight deals for', user.screen_name)
 
@@ -43,7 +44,13 @@ def get_relevant_tweets(tweets):
         if any(kw in tweet_text for kw in my_keywords):
             # figure out which keywords
             kws = [my_keywords[ind] for ind, kw in enumerate(my_keywords) if kw in tweet_text]
-            relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'search_terms': '-'.join([k.upper() for k in kws])})
+            formatted_kws = list(
+                map(lambda: x: airport_dict[x.lower()] if x.lower() in airport_dict else x, kws)
+            )
+            caps_on = [x.capitalize() for x in formatted_kws]
+            deduped = list(dict.fromkeys(caps_on))
+            deduped.sort()
+            relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'search_terms': '-'.join(deduped)})
     return relevant_tweets
 
 def process_tweets(event, context):
@@ -71,7 +78,23 @@ def update_twitter_user(twitter_username, last_tweet_id, user_exists):
     else:
         response = tddb.insert_user(user)
 
-def process_tweet_cleanup(event, context):       
+def process_tweet_cleanup(event, context):
     members = get_list_members()
     print('Cleaning up tweets older than %s days'%(event['days']))
-    tddb.delete_tweets_older_than(members, event['days']) 
+    tddb.delete_tweets_older_than(members, event['days'])
+
+def get_airports(event, context):
+    return {
+       "statusCode": 200,
+       "body": list(airport_dict.values())
+    }
+
+def get_twitter_list_members(event, context):
+    return {
+        "statusCode": 200,
+        "body": get_list_members()
+    }
+
+def get_airport_tweets(event, context):
+    print(event)
+    #pass airport code

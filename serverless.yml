@@ -63,7 +63,7 @@ provider:
           { "Fn::GetAtt": ["TwitterTweetsTable", "Arn" ] }, "index", "${self:custom.tweetsTableName-CreatedDate-Index}"
         ]]}
     - Effect: Allow
-      Action: 
+      Action:
         - SNS:Publish
       Resource:
         - Ref: NewDealTopic
@@ -92,7 +92,7 @@ provider:
     TWITTER_ACCESS_TOKEN_SECRET: ${ssm:dcTwitterAccessTokenSecret}
     TWITTER_CONSUMER_KEY: ${ssm:dcTwitterConsumerKey}
     TWITTER_CONSUMER_SECRET: ${ssm:dcTwitterConsumerSecret}
-    TWITTER_NOTIFICATION_SNS_ARN: 
+    TWITTER_NOTIFICATION_SNS_ARN:
       Ref: NewDealTopic
 
 
@@ -115,10 +115,35 @@ functions:
     handler: TwitterBot.process_tweet_cleanup
     description: Remove old flight deals
     events:
-      - schedule: 
+      - schedule:
           rate: rate(${self:custom.cleanupDays} days)
           input:
             days: ${self:custom.cleanupDays}
+  get-list-members:
+    handler: TwitterBot.get_twitter_list_members
+    description: Get the list of twitter users followed
+    events:
+      - http:
+          path: flight-deals/list-members
+          method: get
+          cors: true # lock down later
+  get-airports:
+    handler: TwitterBot.get_airports
+    description: Get list of airports tracked
+    events:
+      - http:
+          path: flight-deals/airports
+          method: get
+          cors: true
+  get-tweets:
+    handler: TwitterBot.get_airport_tweets
+    description: Get travel deal tweets
+    events:
+      - http:
+          path: flight-deals/tweets
+          method: post
+          cors: true
+# https://serverless.com/framework/docs/providers/aws/events/apigateway/#enabling-cors
 
 
 #    The following are a few example events you can configure

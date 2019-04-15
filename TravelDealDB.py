@@ -68,7 +68,4 @@ def delete_tweets_older_than(list_members, older_than):
                         'search_terms':tweet['search_terms'],
                         'tweet_id':tweet['tweet_id']
                     }
-                ) 
-
-
-# get tweets
+                )
