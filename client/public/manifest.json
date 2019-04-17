@@ -1,0 +1,11 @@
+{
+  "short_name": "Flight Deals App",
+  "name": "Flight Deals from Twitter List",
+  "icons": [
+
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
