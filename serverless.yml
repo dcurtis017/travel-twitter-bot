@@ -45,7 +45,7 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:DescribeTable
-        - dyanmodb:Query
+        - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
@@ -107,12 +107,12 @@ provider:
 
 functions:
   scrape-flight-deals:
-    handler: TwitterBot.process_tweets
+    handler: TravelBot.process_tweets
     description: Scrape flight deals from twitter users list
     events:
       - schedule: rate(3 hours)
   cleanup-old-flight-deals:
-    handler: TwitterBot.process_tweet_cleanup
+    handler: TravelBot.process_tweet_cleanup
     description: Remove old flight deals
     events:
       - schedule:
@@ -120,7 +120,7 @@ functions:
           input:
             days: ${self:custom.cleanupDays}
   get-list-members:
-    handler: TwitterBot.get_twitter_list_members
+    handler: TravelAPI.get_twitter_list_members
     description: Get the list of twitter users followed
     events:
       - http:
@@ -128,7 +128,7 @@ functions:
           method: get
           cors: true # lock down later
   get-airports:
-    handler: TwitterBot.get_airports
+    handler: TravelAPI.get_airports
     description: Get list of airports tracked
     events:
       - http:
@@ -136,7 +136,7 @@ functions:
           method: get
           cors: true
   get-tweets:
-    handler: TwitterBot.get_airport_tweets
+    handler: TravelAPI.get_airport_tweets
     description: Get travel deal tweets
     events:
       - http:

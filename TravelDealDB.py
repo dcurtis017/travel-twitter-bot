@@ -40,12 +40,22 @@ def get_user_last_tweet_id(twitter_username):
 
 def get_tweets_by_search_criteria(search_criteria):
     tweets = twitter_flight_tweets_table.query(
-        KeyConditionExpression=Key('search_terms').contains(search_criteria)
+        KeyConditionExpression=Key('search_terms').eq(search_criteria)
     )
     if 'Items' in tweets:
         return tweets['Items']
     else:
         return []
+
+def get_any_tweet():
+    tweets = twitter_flight_tweets_table.scan(
+        Limit=10
+    )   
+    print(tweets)
+    if 'Items' in tweets:
+        return tweets['Items']
+    else:
+        return []     
 
 def delete_tweets_older_than(list_members, older_than):
     # looks like delete with conditional is not supported so we have to fetch the items then batch them
