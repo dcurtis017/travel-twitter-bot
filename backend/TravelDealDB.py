@@ -1,6 +1,7 @@
 import boto3, os
 from boto3.dynamodb.conditions import Key
 from datetime import datetime, timedelta
+from Airports import airport_dict
 
 dynamodb = boto3.resource('dynamodb')
 #dynamodb = boto3.resource('dynamodb', region_name='us-west-2', endpoint_url="http://localhost:8000")
@@ -38,9 +39,10 @@ def get_user_last_tweet_id(twitter_username):
     else:
         return None
 
-def get_tweets_by_search_criteria(search_criteria):
+def get_tweets_by_airport(airport):
     tweets = twitter_flight_tweets_table.query(
-        KeyConditionExpression=Key('search_terms').eq(search_criteria)
+        KeyConditionExpression=Key('airport').eq(airport),
+        ScanIndexForward=False
     )
     if 'Items' in tweets:
         return tweets['Items']
@@ -48,14 +50,17 @@ def get_tweets_by_search_criteria(search_criteria):
         return []
 
 def get_any_tweet():
-    tweets = twitter_flight_tweets_table.scan(
-        Limit=10
-    )   
-    print(tweets)
-    if 'Items' in tweets:
-        return tweets['Items']
-    else:
-        return []     
+    airports = list(airport_dict.values())
+    all_tweets = []
+    for airport in airports:
+        tweets = twitter_flight_tweets_table.query(
+            KeyConditionExpression=Key('airport').eq(airport),
+            ScanIndexForward=False,
+            Limit=5
+        )
+        if 'Items' in tweets:
+            all_tweets+=tweets['Items']
+    return all_tweets
 
 def delete_tweets_older_than(list_members, older_than):
     # looks like delete with conditional is not supported so we have to fetch the items then batch them
@@ -75,7 +80,7 @@ def delete_tweets_older_than(list_members, older_than):
             for tweet in tweets['Items']:
                 batch.delete_item(
                     Key={
-                        'search_terms':tweet['search_terms'],
+                        'airport':tweet['airport'],
                         'tweet_id':tweet['tweet_id']
                     }
                 )

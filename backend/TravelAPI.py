@@ -25,13 +25,13 @@ def get_airport_tweets(event, context):
     body = json.loads(event['body'])
 
     if 'airport' in body:
-        response = tddb.get_tweets_by_search_criteria(body['airport'])
+        response = tddb.get_tweets_by_airport(body['airport'])
     else:
         response = tddb.get_any_tweet()
-    
+
     output = list(map(convert_tweet_id, response))
 
     return {
         "statusCode": 200,
         "body": json.dumps(output)
-    }         
+    }

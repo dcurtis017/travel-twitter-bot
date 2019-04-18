@@ -1,11 +1,11 @@
 Resources:
   TwitterTweetsTable:
     Type: AWS::DynamoDB::Table
-    DeletionPolicy: Delete # switch to Retain when done 
+    DeletionPolicy: Delete # switch to Retain when done
     Properties:
       TableName: ${self:custom.tweetsTableName}
       AttributeDefinitions:
-        - AttributeName: search_terms
+        - AttributeName: airport
           AttributeType: S
         - AttributeName: tweet_id
           AttributeType: N
@@ -14,7 +14,7 @@ Resources:
         - AttributeName: screen_name
           AttributeType: S
       KeySchema:
-        - AttributeName: search_terms
+        - AttributeName: airport
           KeyType: HASH
         - AttributeName: tweet_id
           KeyType: RANGE
