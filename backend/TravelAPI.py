@@ -1,5 +1,6 @@
 import tweepy, os, json
 from decimal import *
+from json.decoder import JSONDecodeError
 
 import TravelDealDB as tddb
 import TwitterHelper
@@ -24,8 +25,8 @@ def convert_tweet_id(tweet):
 def get_airport_tweets(event, context):
     try:
         body = json.loads(event['body'])
-    except JSONDecodeError:
-        print("JSONDecodeError will return latest results")
+    except (JSONDecodeError, KeyError, TypeError) as e:
+        print("%s will return latest results"%type(e).__name__)
         body = {}
 
     if 'airport' in body:
