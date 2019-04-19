@@ -21,7 +21,7 @@ def get_list_members():
     members = []
     for page in tweepy.Cursor(api.list_members, user.screen_name, list_name).items():
         members.append(page)
-    return [{'screen_name': m.screen_name, 'display_name': m.name, 'profile_image': m.profile_image_url} for m in members]
+    return [{'screen_name': m.screen_name, 'display_name': m.name, 'profile_image': m.profile_image_url_https} for m in members]
 
 def get_initial_tweets():
     tweets = []
