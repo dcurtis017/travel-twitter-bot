@@ -49,5 +49,5 @@ def get_relevant_tweets(tweets):
             deduped = list(dict.fromkeys(caps_on))
             deduped.sort()
             for d in deduped:
-                relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'airport': d})
+                relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'airport_city': d})
     return relevant_tweets

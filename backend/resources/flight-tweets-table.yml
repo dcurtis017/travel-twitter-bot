@@ -5,16 +5,14 @@ Resources:
     Properties:
       TableName: ${self:custom.tweetsTableName}
       AttributeDefinitions:
-        - AttributeName: airport
+        - AttributeName: airport_city
           AttributeType: S
         - AttributeName: tweet_id
           AttributeType: N
         - AttributeName: created_at
           AttributeType: S
-        - AttributeName: screen_name
-          AttributeType: S
       KeySchema:
-        - AttributeName: airport
+        - AttributeName: airport_city
           KeyType: HASH
         - AttributeName: tweet_id
           KeyType: RANGE
@@ -24,7 +22,7 @@ Resources:
       GlobalSecondaryIndexes:
         - IndexName: ${self:custom.tweetsTableName-CreatedDate-Index}
           KeySchema:
-            - AttributeName: screen_name
+            - AttributeName: airport_city
               KeyType: HASH
             - AttributeName: created_at
               KeyType: RANGE

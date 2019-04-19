@@ -9,7 +9,7 @@ from Airports import *
 def get_airports(event, context):
     return {
        "statusCode": 200,
-       "body": json.dumps(list(airport_dict.values()))
+       "body": json.dumps(airport_dict)
     }
 
 def get_twitter_list_members(event, context):
@@ -29,8 +29,8 @@ def get_airport_tweets(event, context):
         print("%s will return latest results"%type(e).__name__)
         body = {}
 
-    if 'airport' in body:
-        response = tddb.get_tweets_by_airport(body['airport'])
+    if 'airport_city' in body:
+        response = tddb.get_tweets_by_airport_city(body['airport_city'])
     else:
         response = tddb.get_any_tweet()
 
