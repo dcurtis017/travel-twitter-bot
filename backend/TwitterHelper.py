@@ -21,7 +21,7 @@ def get_list_members():
     members = []
     for page in tweepy.Cursor(api.list_members, user.screen_name, list_name).items():
         members.append(page)
-    return [{'screen_name': m.screen_name, 'display_name': m.name} for m in members]
+    return [{'screen_name': m.screen_name, 'display_name': m.name, 'profile_image': m.profile_image_url_https} for m in members]
 
 def get_initial_tweets():
     tweets = []
@@ -49,5 +49,5 @@ def get_relevant_tweets(tweets):
             deduped = list(dict.fromkeys(caps_on))
             deduped.sort()
             for d in deduped:
-                relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'search_terms': d})
+                relevant_tweets.append({'text': tweet.text, 'tweet_id': int(tweet.id_str), 'created_at': tweet.created_at.isoformat(), 'screen_name': tweet.user.screen_name, 'airport_city': d})
     return relevant_tweets

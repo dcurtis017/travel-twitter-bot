@@ -1,7 +1,6 @@
 import tweepy, os, json
 from decimal import *
 
-import Airports
 import TravelDealDB as tddb
 import TwitterHelper
 from TravelDealNotifier import send_notification
@@ -32,6 +31,5 @@ def update_twitter_user(twitter_username, last_tweet_id, user_exists):
         response = tddb.insert_user(user)
 
 def process_tweet_cleanup(event, context):
-    members = TwitterHelper.get_list_members()
     print('Cleaning up tweets older than %s days'%(event['days']))
-    tddb.delete_tweets_older_than(members, event['days'])
+    tddb.delete_tweets_older_than(event['days'])

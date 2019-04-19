@@ -1,6 +1,7 @@
 import boto3, os
 from boto3.dynamodb.conditions import Key
 from datetime import datetime, timedelta
+from Airports import airport_cities
 
 dynamodb = boto3.resource('dynamodb')
 #dynamodb = boto3.resource('dynamodb', region_name='us-west-2', endpoint_url="http://localhost:8000")
@@ -38,9 +39,11 @@ def get_user_last_tweet_id(twitter_username):
     else:
         return None
 
-def get_tweets_by_search_criteria(search_criteria):
+def get_tweets_by_airport_city(airport_city, limit=100):
     tweets = twitter_flight_tweets_table.query(
-        KeyConditionExpression=Key('search_terms').eq(search_criteria)
+        KeyConditionExpression=Key('airport_city').eq(airport_city),
+        ScanIndexForward=False,
+        Limit=limit
     )
     if 'Items' in tweets:
         return tweets['Items']
@@ -48,34 +51,31 @@ def get_tweets_by_search_criteria(search_criteria):
         return []
 
 def get_any_tweet():
-    tweets = twitter_flight_tweets_table.scan(
-        Limit=10
-    )   
-    print(tweets)
-    if 'Items' in tweets:
-        return tweets['Items']
-    else:
-        return []     
+    all_tweets = []
+    for airport_city in airport_cities:
+        tweets = get_tweets_by_airport_city(airport_city, 5)
+        all_tweets+=tweets
+    return all_tweets
 
-def delete_tweets_older_than(list_members, older_than):
+def delete_tweets_older_than(older_than):
     # looks like delete with conditional is not supported so we have to fetch the items then batch them
     dt = datetime.now().replace(hour=0, minute=0,microsecond=0,second=0) - timedelta(days=older_than)
     dt_iso = dt.isoformat()
-    for member in list_members:
+    for city in airport_cities:
         tweets = twitter_flight_tweets_table.query(
             IndexName = twitter_flight_tweets_table_created_date_index,
             ExpressionAttributeValues={
                 ':v2':dt_iso,
-                ':v1':member
+                ':v1':city
             },
-            KeyConditionExpression='screen_name = :v1 and created_at < :v2'
+            KeyConditionExpression='airport_city = :v1 and created_at < :v2'
         )
-        print("Will attempt to delete %d tweets for list member %s"%(tweets['Count'], member))
+        print("Will attempt to delete %d tweets for %s"%(tweets['Count'], city))
         with twitter_flight_tweets_table.batch_writer() as batch:
             for tweet in tweets['Items']:
                 batch.delete_item(
                     Key={
-                        'search_terms':tweet['search_terms'],
+                        'airport_city':tweet['airport_city'],
                         'tweet_id':tweet['tweet_id']
                     }
                 )
