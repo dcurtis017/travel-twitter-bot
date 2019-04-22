@@ -1,0 +1,7 @@
+.box-list-member{
+    display:flex;
+    flex-direction: row;
+}
+.list-member-text{
+    margin-left:2em;
+}

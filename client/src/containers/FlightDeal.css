@@ -1,0 +1,16 @@
+.flight-deal-card{
+    border: 1px solid black;
+    word-wrap: break-word;
+    width: 75%;
+    padding: .5em 1.5em .5em 1.5em;
+    margin-bottom: 1em;
+}
+
+.flight-deal-card h3{
+    font-size: 1.25em;
+    color: black;
+}
+
+.flight-deal-card h3 a{
+    color:black;
+}
